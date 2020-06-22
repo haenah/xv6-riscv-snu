@@ -25,6 +25,7 @@
 #define SNU 1
 
 #ifdef SNU
+extern struct proc proc[NPROC];
 
 // Function for running thread.
 void run_thread(void)
@@ -83,9 +84,8 @@ kthread_exit(void)
   struct proc* p = myproc();
 
   acquire(&p->lock);
+
   p->tf = 0;
-  if (p->pagetable)
-    proc_freepagetable(p->pagetable, p->sz);
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
@@ -95,7 +95,9 @@ kthread_exit(void)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
-  release(&p->lock);
+  p->base_prio = USER_DEF_PRIO;
+
+  sched();
 }
 
 void

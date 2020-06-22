@@ -109,5 +109,3 @@ struct proc {
 
   int base_prio;
 };
-
-extern struct proc proc[NPROC];

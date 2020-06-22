@@ -186,6 +186,7 @@ void            virtio_disk_init(void);
 void            virtio_disk_rw(struct buf *, int);
 void            virtio_disk_intr();
 
+#define SNU 1
 #ifdef SNU
 // kthread.c
 #define USER_MAX_PRIO   139
