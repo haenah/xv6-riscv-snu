@@ -106,6 +106,8 @@ struct proc {
 
   void (*fn)(void*);
   uint64 arg;
+
+  int base_prio;
 };
 
 extern struct proc proc[NPROC];

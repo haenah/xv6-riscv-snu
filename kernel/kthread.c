@@ -22,7 +22,7 @@
 #include "proc.h"
 #include "defs.h"
 
-// #define SNU 1
+#define SNU 1
 
 #ifdef SNU
 
@@ -62,6 +62,7 @@ found:
 
   // Apply arguments to the thread.
   safestrcpy(t->name, name, sizeof(t->name));
+  t->base_prio = prio;
   t->fn = fn;
   t->arg = (uint64)arg;
 
@@ -111,20 +112,17 @@ kthread_yield(void)
 void
 kthread_set_prio(int newprio)
 {
+  struct proc *t = myproc();
 
-
-
-  return;
+  acquire(&t->lock);
+  t->base_prio = newprio;
+  release(&t->lock);
 }
 
 int
 kthread_get_prio(void)
 {
-
-
-
-
-  return 0;
+  return myproc()->base_prio;
 }
 #endif
 
