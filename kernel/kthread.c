@@ -30,7 +30,7 @@ extern struct proc proc[NPROC];
 // Function for running thread.
 void run_thread(void)
 {
-  // Still holding p->lock from scheduler.
+  // Still holding p->lock from scheduler. So unlock it.
   release(&myproc()->lock);
 
   // Run argument function.
@@ -59,6 +59,8 @@ kthread_create(const char *name, int prio, void (*fn)(void *), void *arg)
 
 found:
   t->pid = allocpid();
+
+  // Allocate kernel_pagetable as in specification.
   t->pagetable = kernel_pagetable;
 
   // Apply arguments to the thread.
@@ -69,6 +71,7 @@ found:
 
   // Set up context to run thread.
   t->context.ra = (uint64)run_thread;
+  // Use stack pointer already allocated by procinit().
   t->context.sp = t->kstack + PGSIZE;
 
   t->state = RUNNABLE;
@@ -85,6 +88,7 @@ kthread_exit(void)
 
   acquire(&p->lock);
 
+  // Initialize all.
   p->tf = 0;
   p->pagetable = 0;
   p->sz = 0;
@@ -95,7 +99,7 @@ kthread_exit(void)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
-  p->base_prio = USER_DEF_PRIO;
+  p->base_prio = 0;
 
   sched();
 }
